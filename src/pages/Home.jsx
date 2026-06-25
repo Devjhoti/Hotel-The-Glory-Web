@@ -5,6 +5,8 @@ import Rooms from '../components/Rooms'
 import Facilities from '../components/Facilities'
 import TourPackages from '../components/TourPackages'
 import Gallery from '../components/Gallery'
+import Reviews from '../components/Reviews'
+import VirtualTour from '../components/VirtualTour'
 import Contact from '../components/Contact'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -84,6 +86,8 @@ export default function Home({ isLoading }) {
       <Facilities />
       <TourPackages />
       <Gallery />
+      <Reviews />
+      <VirtualTour />
       <Contact />
     </div>
   )
