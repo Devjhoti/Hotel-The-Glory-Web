@@ -451,7 +451,7 @@ export default function Facilities() {
 
           // Reveal active media canvas
           tl.fromTo(`.facility-img-wrapper-${i}`,
-            { clipPath: 'polygon(0% 100%, 100% 85%, 100% 100%, 0% 100%)' },
+            { clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' },
             {
               clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
               duration: 1.8,
