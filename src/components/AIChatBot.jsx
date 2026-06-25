@@ -63,33 +63,15 @@ export default function AIChatBot() {
     }
   }
 
+  const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+
   const getBotResponse = async (chatMessages) => {
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-    // In production, try to hit Vercel Serverless Function proxy
-    if (!isLocalhost) {
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: chatMessages })
-        })
-        if (response.ok) {
-          const data = await response.json()
-          return data.choices[0].message.content
-        }
-        console.warn('Backend proxy response not OK, falling back to direct API.')
-      } catch (err) {
-        console.warn('Error fetching from serverless endpoint, using client fallback.', err)
-      }
-    }
-
-    // Direct Browser-to-Groq request (Local Dev Fallback or Backend Fail)
     const apiKey = import.meta.env.VITE_GROQ_API_KEY
     if (!apiKey) {
       throw new Error('VITE_GROQ_API_KEY is not set. Add it to Vercel environment variables and redeploy.')
     }
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+
+    const response = await fetch(GROQ_API_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -113,7 +95,10 @@ export default function AIChatBot() {
     })
 
     if (!response.ok) {
-      throw new Error('Groq API direct call failed.')
+      let errorBody = ''
+      try { errorBody = await response.text() } catch {}
+      console.error('Groq API error:', response.status, errorBody)
+      throw new Error(`Groq API failed (${response.status}). Check console for details.`)
     }
     const data = await response.json()
     return data.choices[0].message.content
