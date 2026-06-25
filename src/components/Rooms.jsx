@@ -67,6 +67,27 @@ function RoomCard({ room }) {
     if (hiddenRef.current)  hiddenRef.current.style.opacity = '0'
   }
 
+  const handleMouseMove = (e) => {
+    const card = cardRef.current
+    if (!card) return
+    const rect = card.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const glare = card.querySelector('.card-glare')
+    if (glare) {
+      glare.style.background = `radial-gradient(circle at ${(x / rect.width) * 100}% ${(y / rect.height) * 100}%, rgba(255, 255, 255, 0.12) 0%, transparent 55%)`
+      glare.style.opacity = '1'
+    }
+  }
+
+  const handleMouseLeave = () => {
+    collapse()
+    const card = cardRef.current
+    if (!card) return
+    const glare = card.querySelector('.card-glare')
+    if (glare) glare.style.opacity = '0'
+  }
+
   return (
     // Outer wrapper: card + reflection stacked vertically
     <div
@@ -83,7 +104,8 @@ function RoomCard({ room }) {
         ref={cardRef}
         className="room-card"
         onMouseEnter={expand}
-        onMouseLeave={collapse}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
         style={{
           width: '100%',
           height: 'clamp(340px, 55vh, 620px)',
@@ -96,6 +118,20 @@ function RoomCard({ room }) {
           flexShrink: 0,
         }}
       >
+        {/* Specular glare overlay */}
+        <div
+          className="card-glare"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0,
+            transition: 'opacity 0.4s ease',
+            pointerEvents: 'none',
+            zIndex: 10,
+            mixBlendMode: 'overlay',
+            willChange: 'background, opacity'
+          }}
+        />
         {/* Image */}
         <div className="room-image-wrapper" style={{ width: '100%', height: '100%', overflow: 'hidden', position: 'relative' }}>
           <img

@@ -34,11 +34,11 @@ export default function Hero({ isLoading }) {
           duration: 1.0,
           ease: 'power2.out',
         }, '-=1.2')
-        .to('.hero-main-title span', {
+        .to('.hero-title-char', {
           y: 0,
           opacity: 1,
-          stagger: 0.12,
-          duration: 1.4,
+          stagger: 0.04,
+          duration: 1.2,
           ease: 'power4.out',
         }, '-=0.9')
         .to('.hero-subtitle', {
@@ -64,6 +64,24 @@ export default function Hero({ isLoading }) {
 
     return () => ctx.revert()
   }, [isLoading])
+
+  const splitText = (text) => {
+    return text.split('').map((char, index) => (
+      <span
+        key={index}
+        className="hero-title-char"
+        style={{
+          display: 'inline-block',
+          opacity: 0,
+          transform: char === ' ' ? 'none' : 'translateY(80px)',
+          whiteSpace: char === ' ' ? 'pre' : 'normal',
+          willChange: 'transform, opacity'
+        }}
+      >
+        {char}
+      </span>
+    ))
+  }
 
   return (
     <section
@@ -100,7 +118,7 @@ export default function Hero({ isLoading }) {
             height: '100%',
             objectFit: 'cover',
             opacity: 0, // Animates to 1
-            scale: 1.15, // Animates to 1 (lens reveal)
+            scale: 1.18, // Animates to 1 (lens reveal)
             filter: 'blur(10px)', // Animates to 0px (lens focus)
             transition: 'none',
           }}
@@ -151,19 +169,17 @@ export default function Hero({ isLoading }) {
           style={{
             fontSize: 'clamp(44px, 7.5vw, 100px)',
             fontWeight: '800',
-            letterSpacing: '14px',
+            letterSpacing: 'clamp(6px, 1.2vw, 12px)',
             lineHeight: '1.15',
             color: 'var(--text-light)',
             textTransform: 'uppercase',
             overflow: 'hidden',
-            display: 'flex',
+            display: 'inline-flex',
             justifyContent: 'center',
-            gap: '16px',
             flexWrap: 'wrap',
           }}
         >
-          <span style={{ display: 'inline-block', opacity: 0, transform: 'translateY(100px)' }}>HOTEL THE</span>{' '}
-          <span style={{ display: 'inline-block', opacity: 0, transform: 'translateY(100px)' }}>GLORY</span>
+          {splitText("HOTEL THE GLORY")}
         </h1>
 
         <p

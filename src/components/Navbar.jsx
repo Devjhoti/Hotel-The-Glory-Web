@@ -10,6 +10,98 @@ const navLinks = [
   { name: 'Contact', href: '#contact' }
 ]
 
+function MagneticNavLink({ href, children }) {
+  const elRef = useRef(null)
+
+  const handleMouseMove = (e) => {
+    const el = elRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const x = e.clientX - rect.left - rect.width / 2
+    const y = e.clientY - rect.top - rect.height / 2
+
+    gsap.to(el, {
+      x: x * 0.35,
+      y: y * 0.35,
+      duration: 0.4,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    })
+  }
+
+  const handleMouseLeave = () => {
+    const el = elRef.current
+    if (!el) return
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      duration: 0.6,
+      ease: 'elastic.out(1.1, 0.4)',
+      overwrite: 'auto'
+    })
+  }
+
+  return (
+    <div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '10px 14px',
+        margin: '0 -14px',
+        cursor: 'pointer'
+      }}
+    >
+      <a
+        ref={elRef}
+        href={href}
+        style={{
+          fontSize: '13px',
+          fontWeight: '400',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: 'var(--text-light)',
+          position: 'relative',
+          padding: '6px 0',
+          opacity: 0.8,
+          transition: 'opacity 0.3s ease, color 0.3s ease',
+          display: 'inline-block'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = '1'
+          e.currentTarget.style.color = 'var(--brand-gold)'
+          const line = e.currentTarget.querySelector('.nav-line')
+          if (line) gsap.to(line, { scaleX: 1, duration: 0.3, ease: 'power2.out' })
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = '0.8'
+          e.currentTarget.style.color = 'var(--text-light)'
+          const line = e.currentTarget.querySelector('.nav-line')
+          if (line) gsap.to(line, { scaleX: 0, duration: 0.3, ease: 'power2.in' })
+        }}
+      >
+        {children}
+        <span
+          className="nav-line"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            height: '1px',
+            backgroundColor: 'var(--brand-gold)',
+            transform: 'scaleX(0)',
+            transformOrigin: 'center',
+            transition: 'none',
+          }}
+        />
+      </a>
+    </div>
+  )
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -80,48 +172,9 @@ export default function Navbar() {
           }}
         >
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              style={{
-                fontSize: '13px',
-                fontWeight: '400',
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-                color: 'var(--text-light)',
-                position: 'relative',
-                padding: '6px 0',
-                opacity: 0.8,
-                transition: 'opacity 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '1'
-                const line = e.currentTarget.querySelector('.nav-line')
-                if (line) gsap.to(line, { scaleX: 1, duration: 0.3, ease: 'power2.out' })
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '0.8'
-                const line = e.currentTarget.querySelector('.nav-line')
-                if (line) gsap.to(line, { scaleX: 0, duration: 0.3, ease: 'power2.in' })
-              }}
-            >
+            <MagneticNavLink key={link.name} href={link.href}>
               {link.name}
-              {/* Dynamic hover line */}
-              <span
-                className="nav-line"
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '1px',
-                  backgroundColor: 'var(--brand-gold)',
-                  transform: 'scaleX(0)',
-                  transformOrigin: 'center',
-                  transition: 'none',
-                }}
-              />
-            </a>
+            </MagneticNavLink>
           ))}
         </div>
 

@@ -55,13 +55,25 @@ function USPCard({ title, desc, icon, index }) {
   const handleMouseMove = (e) => {
     if (!cardRef.current || !glowRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
-    glowRef.current.style.background = `radial-gradient(circle at ${e.clientX - rect.left}px ${e.clientY - rect.top}px, rgba(2, 147, 68, 0.3) 0%, transparent 65%)`
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    
+    // Green Glow
+    glowRef.current.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(2, 147, 68, 0.3) 0%, transparent 65%)`
     glowRef.current.style.opacity = '1'
+
+    // Specular Glare
+    const glare = cardRef.current.querySelector('.card-glare')
+    if (glare) {
+      glare.style.background = `radial-gradient(circle at ${(x / rect.width) * 100}% ${(y / rect.height) * 100}%, rgba(255, 255, 255, 0.12) 0%, transparent 55%)`
+      glare.style.opacity = '1'
+    }
   }
 
   const handleMouseLeave = () => {
-    if (!glowRef.current) return
-    glowRef.current.style.opacity = '0'
+    if (glowRef.current) glowRef.current.style.opacity = '0'
+    const glare = cardRef.current?.querySelector('.card-glare')
+    if (glare) glare.style.opacity = '0'
   }
 
   return (
@@ -83,6 +95,19 @@ function USPCard({ title, desc, icon, index }) {
         '--translate-y': index % 2 === 1 ? '40px' : '0px',
       }}
     >
+      <div
+        className="card-glare"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0,
+          transition: 'opacity 0.4s ease',
+          pointerEvents: 'none',
+          zIndex: 2,
+          mixBlendMode: 'overlay',
+          willChange: 'background, opacity'
+        }}
+      />
       <div
         ref={glowRef}
         style={{

@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import Loader from './components/Loader'
 import AIChatBot from './components/AIChatBot'
+import CustomCursor from './components/CustomCursor'
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true)
@@ -24,6 +25,7 @@ export default function App() {
     <>
       <Loader onComplete={() => setIsLoading(false)} />
       {!isLoading && <Navbar />}
+      {!isLoading && <CustomCursor />}
       <Routes>
         <Route path="/" element={<Home isLoading={isLoading} />} />
       </Routes>
