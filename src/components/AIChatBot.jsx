@@ -50,13 +50,13 @@ export default function AIChatBot() {
       const responseText = await getBotResponse(updatedMessages)
       setMessages(prev => [...prev, { role: 'assistant', content: responseText }])
     } catch (error) {
-      console.error(error)
+      console.error('Chatbot error:', error)
+      const errorHint = error.message?.includes('VITE_GROQ_API_KEY')
+        ? 'The chatbot is not fully configured yet. Please contact the site owner to set up the API key.'
+        : 'I apologize, Guest. I encountered a temporary connection issue. Please feel free to reach our reservations desk directly at +8801303995511.'
       setMessages(prev => [
         ...prev,
-        {
-          role: 'assistant',
-          content: 'I apologize, Guest. I encountered a temporary connection issue. Please feel free to reach our reservations desk directly at +8801303995511.'
-        }
+        { role: 'assistant', content: errorHint }
       ])
     } finally {
       setIsTyping(false)
@@ -86,6 +86,9 @@ export default function AIChatBot() {
 
     // Direct Browser-to-Groq request (Local Dev Fallback or Backend Fail)
     const apiKey = import.meta.env.VITE_GROQ_API_KEY
+    if (!apiKey) {
+      throw new Error('VITE_GROQ_API_KEY is not set. Add it to Vercel environment variables and redeploy.')
+    }
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
