@@ -82,12 +82,12 @@ export default function Home({ isLoading }) {
     <div ref={containerRef}>
       <Hero isLoading={isLoading} />
       <About isLoading={isLoading} />
+      <VirtualTour />
       <Rooms />
       <Facilities />
       <TourPackages />
       <Gallery />
       <Reviews />
-      <VirtualTour />
       <Contact />
     </div>
   )
