@@ -4,7 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// 11 images — room shots + creative graphics
 const GALLERY_IMAGES = [
   { src: '/images/room-hero.jpg',    label: 'The Grand Lobby'          },
   { src: '/images/room-2.jpg',       label: 'Executive Suite'          },
@@ -19,22 +18,22 @@ const GALLERY_IMAGES = [
   { src: '/creative/creative-8.jpg', label: 'Tea Garden Excursion'     },
 ]
 
-// Individual card: image + mirror reflection below
 function GalleryCard({ img, index }) {
   return (
     <div
+      className="gallery-card-wrapper"
       style={{
         position: 'relative',
         flexShrink: 0,
-        // ~30vw so 3 cards fill the viewport
         width: 'clamp(280px, 30vw, 500px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
       }}
     >
-      {/* ── Main Image ── */}
+      {/* ── Main Image Frame ── */}
       <div
+        className="gallery-image-frame"
         style={{
           width: '100%',
           height: 'clamp(340px, 55vh, 620px)',
@@ -44,21 +43,23 @@ function GalleryCard({ img, index }) {
           border: '1px solid rgba(212,175,55,0.20)',
           boxShadow: '0 28px 70px rgba(0,0,0,0.7)',
           flexShrink: 0,
+          clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)', // Initially hidden flat line
+          willChange: 'clip-path'
         }}
       >
         <img
           src={img.src}
           alt={img.label}
           loading="lazy"
+          className="gallery-img"
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'cover',
             display: 'block',
-            transition: 'transform 0.7s cubic-bezier(0.25,1,0.5,1)',
+            transform: 'scale(1.25)',
+            willChange: 'transform'
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.06)' }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
         />
 
         {/* Gold corner accents */}
@@ -75,30 +76,42 @@ function GalleryCard({ img, index }) {
         }}/>
 
         {/* Label */}
-        <div style={{
-          position: 'absolute', bottom: 22, left: 22,
-          fontFamily: 'var(--font-serif)',
-          fontSize: '17px', fontWeight: 400, letterSpacing: '1px',
-          color: 'rgba(255,255,255,0.94)',
-        }}>
+        <div
+          className="gallery-label"
+          style={{
+            position: 'absolute', bottom: 22, left: 22,
+            fontFamily: 'var(--font-serif)',
+            fontSize: '17px', fontWeight: 400, letterSpacing: '1px',
+            color: 'rgba(255,255,255,0.94)',
+            opacity: 0,
+            transform: 'translateY(15px)',
+            willChange: 'transform, opacity'
+          }}
+        >
           {img.label}
         </div>
 
         {/* Index badge */}
-        <div style={{
-          position: 'absolute', top: 16, right: 16,
-          fontFamily: 'var(--font-sans)',
-          fontSize: '11px', letterSpacing: '2px',
-          color: 'var(--brand-gold)', opacity: 0.85,
-        }}>
+        <div
+          className="gallery-index-badge"
+          style={{
+            position: 'absolute', top: 16, right: 16,
+            fontFamily: 'var(--font-sans)',
+            fontSize: '11px', letterSpacing: '2px',
+            color: 'var(--brand-gold)',
+            opacity: 0,
+            transform: 'translateY(15px)',
+            willChange: 'transform, opacity'
+          }}
+        >
           {String(index + 1).padStart(2, '0')}
         </div>
       </div>
 
       {/* ── Reflection ── */}
-      {/* Flipped image, heavily faded mask = soft floor mirror */}
       <div
         aria-hidden="true"
+        className="gallery-reflection"
         style={{
           width: '100%',
           height: 'clamp(50px, 10vh, 120px)',
@@ -106,10 +119,10 @@ function GalleryCard({ img, index }) {
           flexShrink: 0,
           transform: 'scaleY(-1)',
           borderRadius: '0 0 4px 4px',
-          // Wider, multi-stop gradient = softer, more gradual fade
           WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.01) 15%, rgba(0,0,0,0.12) 45%, rgba(0,0,0,0.40) 80%, rgba(0,0,0,0.65) 100%)',
           maskImage:       'linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.01) 15%, rgba(0,0,0,0.12) 45%, rgba(0,0,0,0.40) 80%, rgba(0,0,0,0.65) 100%)',
-          opacity: 0.35,      // adjusted slightly higher for blurred contrast
+          opacity: 0, // initially hidden, fades in in sync
+          willChange: 'opacity'
         }}
       >
         <img
@@ -128,13 +141,17 @@ function GalleryCard({ img, index }) {
       </div>
 
       {/* Thin gold divider line between image and reflection */}
-      <div style={{
-        width: '75%',
-        height: '1px',
-        background: 'linear-gradient(to right, transparent, rgba(212,175,55,0.25), transparent)',
-        marginTop: '-4px',
-        flexShrink: 0,
-      }}/>
+      <div
+        className="gallery-line"
+        style={{
+          width: '0%', // starts at 0% and expands
+          height: '1px',
+          background: 'linear-gradient(to right, transparent, rgba(212,175,55,0.25), transparent)',
+          marginTop: '-4px',
+          flexShrink: 0,
+          willChange: 'width'
+        }}
+      />
     </div>
   )
 }
@@ -149,22 +166,104 @@ export default function Gallery() {
     if (!section || !track) return
 
     const ctx = gsap.context(() => {
-      // How far to scroll horizontally
       const getScrollDist = () => track.scrollWidth - window.innerWidth
 
-      gsap.to(track, {
+      // Main Pinning Timeline
+      const horizTween = gsap.to(track, {
         x: () => -getScrollDist(),
         ease: 'none',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          // end is proportional to total content — more images = more scroll
           end: () => '+=' + (getScrollDist() * 1.15),
           pin: true,
           scrub: 1.0,
           invalidateOnRefresh: true,
           anticipatePin: 1,
         }
+      })
+
+      // Staggered Title reveal
+      const titleTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+
+      titleTl.fromTo('.gallery-title-sub',
+        { opacity: 0, y: 15, letterSpacing: '2px' },
+        { opacity: 1, y: 0, letterSpacing: '4px', duration: 0.8, ease: 'power3.out' }
+      )
+      .fromTo('.gallery-title-main',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
+        '-=0.6'
+      )
+
+      // Individual Card Reveals (triggered as they scroll horizontally into viewport)
+      const cards = gsap.utils.toArray('.gallery-card-wrapper')
+      cards.forEach((card) => {
+        const frame = card.querySelector('.gallery-image-frame')
+        const img = card.querySelector('.gallery-img')
+        const label = card.querySelector('.gallery-label')
+        const indexBadge = card.querySelector('.gallery-index-badge')
+        const reflection = card.querySelector('.gallery-reflection')
+        const line = card.querySelector('.gallery-line')
+
+        const cardTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            containerAnimation: horizTween,
+            start: 'left 90%',
+            toggleActions: 'play none none reverse'
+          }
+        })
+
+        // Diagonal reveal sweep
+        cardTl.fromTo(frame,
+          { clipPath: 'polygon(0% 100%, 100% 88%, 100% 100%, 0% 100%)' }, // subtle diagonal start wedge
+          {
+            clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+            duration: 1.6,
+            ease: 'power3.inOut'
+          }
+        )
+        // Image zoom out parallax
+        .fromTo(img,
+          { scale: 1.25 },
+          {
+            scale: 1,
+            duration: 1.6,
+            ease: 'power2.out'
+          },
+          '0'
+        )
+        // Reflection fade in
+        .to(reflection, {
+          opacity: 0.35,
+          duration: 1.4,
+          ease: 'power2.out'
+        }, '0.2')
+        // Gold highlight line widening
+        .to(line, {
+          width: '75%',
+          duration: 1.4,
+          ease: 'power2.out'
+        }, '0.2')
+        // Heading details fade-up
+        .fromTo([label, indexBadge],
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.1,
+            duration: 0.8,
+            ease: 'power2.out'
+          },
+          '-=1.0'
+        )
       })
     }, section)
 
@@ -182,7 +281,7 @@ export default function Gallery() {
         zIndex: 4,
       }}
     >
-      {/* ── Section heading (fixed while scrolling horizontally) ── */}
+      {/* ── Section heading ── */}
       <div
         style={{
           position: 'absolute',
@@ -193,6 +292,7 @@ export default function Gallery() {
         }}
       >
         <span
+          className="gallery-title-sub"
           style={{
             display: 'inline-block',
             padding: '5px 16px',
@@ -203,12 +303,13 @@ export default function Gallery() {
             textTransform: 'uppercase',
             color: 'var(--brand-gold)',
             fontFamily: 'var(--font-sans)',
+            willChange: 'transform, opacity, letter-spacing'
           }}
         >
           Visual Journey
         </span>
         <h2
-          className="font-serif"
+          className="gallery-title-main font-serif"
           style={{
             marginTop: 18,
             fontSize: 'clamp(34px, 4.5vw, 60px)',
@@ -216,6 +317,7 @@ export default function Gallery() {
             lineHeight: 1.1,
             letterSpacing: '3px',
             color: 'var(--text-light)',
+            willChange: 'transform, opacity'
           }}
         >
           Our <span className="text-gold" style={{ fontWeight: 600 }}>Gallery</span>
@@ -268,6 +370,15 @@ export default function Gallery() {
           <path d="M33 2l7 4-7 4" stroke="currentColor" strokeWidth="1" fill="none"/>
         </svg>
       </div>
+
+      <style>{`
+        .gallery-img {
+          transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+        .gallery-card-wrapper:hover .gallery-img {
+          transform: scale(1.08) !important;
+        }
+      `}</style>
     </section>
   )
 }
