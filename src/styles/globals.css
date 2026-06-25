@@ -1,0 +1,189 @@
+:root {
+  /* Color Variables */
+  --bg-dark-obsidian: #080a08;
+  --bg-dark-card: rgba(13, 18, 14, 0.75);
+  --brand-emerald: #029344;
+  --brand-gold: #d4af37;
+  --brand-gold-rgb: 212, 175, 55;
+  --brand-champagne: #d8cba8;
+  --text-light: #f5f5f5;
+  --text-muted: #cbd1cc;
+  --text-dark: #0a0a0a;
+  
+  /* Fonts */
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Transitions */
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-fast: all 0.2s ease;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-gold) var(--bg-dark-obsidian);
+}
+
+/* Custom Scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark-obsidian);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-gold);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-champagne);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-dark-obsidian);
+  color: var(--text-light);
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition-fast);
+}
+
+ul {
+  list-style: none;
+}
+
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Premium Utility Classes */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.text-gold {
+  color: var(--brand-gold);
+}
+
+.text-champagne {
+  color: var(--brand-champagne);
+}
+
+.text-emerald {
+  color: var(--brand-emerald);
+}
+
+.glass-panel {
+  background: var(--bg-dark-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.glass-panel:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow: 0 8px 32px 0 rgba(0, 136, 62, 0.05);
+}
+
+.gold-btn {
+  background: transparent;
+  color: var(--brand-gold);
+  border: 1px solid var(--brand-gold);
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.gold-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: var(--brand-gold);
+  transform: translate(-50%, -50%) scaleX(0);
+  transition: var(--transition-smooth);
+  z-index: -1;
+}
+
+.gold-btn:hover {
+  color: var(--text-dark);
+}
+
+.gold-btn:hover::before {
+  transform: translate(-50%, -50%) scaleX(1);
+}
+
+.emerald-badge {
+  background: rgba(2, 147, 68, 0.1);
+  color: var(--brand-emerald);
+  border: 1px solid rgba(2, 147, 68, 0.3);
+  padding: 6px 14px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+/* Image zoom hover effect */
+.img-zoom-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.img-zoom-container img {
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.img-zoom-container:hover img {
+  transform: scale(1.08);
+}
+
+/* Responsiveness Media Queries */
+@media (max-width: 991px) {
+  .desktop-menu {
+    display: none !important;
+  }
+  .mobile-hamburger-btn {
+    display: flex !important;
+  }
+  .navbar-container {
+    padding: 16px 24px !important;
+  }
+}
+
+
