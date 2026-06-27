@@ -19,6 +19,11 @@ export default function Home({ isLoading }) {
   useEffect(() => {
     if (isLoading) return
 
+    // Refresh ScrollTrigger to calculate offsets correctly after preloader exits
+    setTimeout(() => {
+      ScrollTrigger.refresh()
+    }, 100)
+
     const ctx = gsap.context(() => {
       // Pin Hero and let About overlap it
       ScrollTrigger.create({
@@ -90,13 +95,13 @@ export default function Home({ isLoading }) {
       <div style={{ position: 'relative', zIndex: 2 }}>
         <Hero isLoading={isLoading} />
         <About isLoading={isLoading} />
-        <VirtualTour />
-        <Rooms />
-        <Facilities />
-        <TourPackages />
-        <Gallery />
-        <Reviews />
-        <Contact />
+        <VirtualTour isLoading={isLoading} />
+        <Rooms isLoading={isLoading} />
+        <Facilities isLoading={isLoading} />
+        <TourPackages isLoading={isLoading} />
+        <Gallery isLoading={isLoading} />
+        <Reviews isLoading={isLoading} />
+        <Contact isLoading={isLoading} />
       </div>
 
       <style>{`

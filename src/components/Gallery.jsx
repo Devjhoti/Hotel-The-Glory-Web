@@ -156,11 +156,13 @@ function GalleryCard({ img, index }) {
   )
 }
 
-export default function Gallery() {
+export default function Gallery({ isLoading }) {
   const sectionRef = useRef(null)
-  const trackRef   = useRef(null)
+  const trackRef = useRef(null)
 
   useEffect(() => {
+    if (isLoading) return
+
     const section = sectionRef.current
     const track   = trackRef.current
     if (!section || !track) return
@@ -193,8 +195,8 @@ export default function Gallery() {
       })
 
       titleTl.fromTo('.gallery-title-sub',
-        { opacity: 0, y: 15, letterSpacing: '2px' },
-        { opacity: 1, y: 0, letterSpacing: '4px', duration: 0.8, ease: 'power3.out' }
+        { opacity: 0, y: 15, letterSpacing: '4px' },
+        { opacity: 1, y: 0, letterSpacing: '6px', duration: 0.8, ease: 'power3.out' }
       )
       .fromTo('.gallery-title-main',
         { opacity: 0, y: 30 },
@@ -268,7 +270,7 @@ export default function Gallery() {
     }, section)
 
     return () => ctx.revert()
-  }, [])
+  }, [isLoading])
 
   return (
     <section

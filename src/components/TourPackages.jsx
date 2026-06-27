@@ -284,10 +284,12 @@ function TourCard({ title, duration, price, img, desc, inclusions, id }) {
   )
 }
 
-export default function TourPackages() {
+export default function TourPackages({ isLoading }) {
   const sectionRef = useRef(null)
 
   useEffect(() => {
+    if (isLoading) return
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -337,7 +339,7 @@ export default function TourPackages() {
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [isLoading])
 
   return (
     <section

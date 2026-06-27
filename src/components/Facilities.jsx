@@ -271,7 +271,7 @@ function MobileFacilityCard({ id, title, desc, img, icon }) {
   )
 }
 
-export default function Facilities() {
+export default function Facilities({ isLoading }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 1024 : false)
   const sectionRef = useRef(null)
   const mediaColRef = useRef(null)
@@ -313,6 +313,8 @@ export default function Facilities() {
   }
 
   useEffect(() => {
+    if (isLoading) return
+
     const ctx = gsap.context(() => {
       if (isMobile) {
         // Mobile Animation
@@ -473,7 +475,7 @@ export default function Facilities() {
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [isMobile])
+  }, [isMobile, isLoading])
 
   if (isMobile) {
     return (

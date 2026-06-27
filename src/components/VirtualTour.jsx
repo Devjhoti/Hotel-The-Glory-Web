@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function VirtualTour() {
+export default function VirtualTour({ isLoading }) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(true)
   const [progress, setProgress] = useState(0)
@@ -35,6 +35,8 @@ export default function VirtualTour() {
 
   // Double-Check Scroll Entrance Animation
   useEffect(() => {
+    if (isLoading) return
+
     const ctx = gsap.context(() => {
       // Scale down and widen container on scroll trigger
       gsap.fromTo('.video-frame-container',
@@ -70,7 +72,7 @@ export default function VirtualTour() {
     }, containerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [isLoading])
 
   const handlePlayToggle = () => {
     const video = videoRef.current

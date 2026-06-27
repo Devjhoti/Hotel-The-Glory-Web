@@ -257,12 +257,14 @@ function RoomCard({ room }) {
   )
 }
 
-export default function Rooms() {
+export default function Rooms({ isLoading }) {
   const containerRef = useRef(null)
   const stickyRef    = useRef(null)
   const trackRef     = useRef(null)
 
   useEffect(() => {
+    if (isLoading) return
+
     const track     = trackRef.current
     const container = containerRef.current
     if (!track || !container) return
@@ -282,7 +284,7 @@ export default function Rooms() {
     })
 
     return () => pin.kill()
-  }, [])
+  }, [isLoading])
 
   return (
     <section

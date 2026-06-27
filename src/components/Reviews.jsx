@@ -165,10 +165,12 @@ function ReviewCard({ name, location, rating, date, avatarText, content }) {
   )
 }
 
-export default function Reviews() {
+export default function Reviews({ isLoading }) {
   const containerRef = useRef(null)
 
   useEffect(() => {
+    if (isLoading) return
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -216,7 +218,7 @@ export default function Reviews() {
     }, containerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [isLoading])
 
   return (
     <section

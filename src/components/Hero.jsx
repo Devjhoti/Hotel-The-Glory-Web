@@ -66,19 +66,30 @@ export default function Hero({ isLoading }) {
   }, [isLoading])
 
   const splitText = (text) => {
-    return text.split('').map((char, index) => (
+    const words = text.split(' ')
+    return words.map((word, wordIndex) => (
       <span
-        key={index}
-        className="hero-title-char"
+        key={wordIndex}
         style={{
           display: 'inline-block',
-          opacity: 0,
-          transform: char === ' ' ? 'none' : 'translateY(80px)',
-          whiteSpace: char === ' ' ? 'pre' : 'normal',
-          willChange: 'transform, opacity'
+          whiteSpace: 'nowrap',
+          marginRight: wordIndex < words.length - 1 ? '0.3em' : '0'
         }}
       >
-        {char}
+        {word.split('').map((char, charIndex) => (
+          <span
+            key={charIndex}
+            className="hero-title-char"
+            style={{
+              display: 'inline-block',
+              opacity: 0,
+              transform: 'translateY(80px)',
+              willChange: 'transform, opacity'
+            }}
+          >
+            {char}
+          </span>
+        ))}
       </span>
     ))
   }
@@ -174,9 +185,7 @@ export default function Hero({ isLoading }) {
             color: 'var(--text-light)',
             textTransform: 'uppercase',
             overflow: 'hidden',
-            display: 'inline-flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
+            display: 'block',
           }}
         >
           {splitText("HOTEL THE GLORY")}
